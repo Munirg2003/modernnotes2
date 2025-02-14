@@ -1,0 +1,119 @@
+# Development Guidelines for ModernNotes
+
+1. Core Development Principles
+   1.1. Clean Architecture with clear separation of concerns
+   1.2. Test-Driven Development (TDD) with comprehensive test coverage
+   1.3. SOLID principles adherence
+   1.4. Security-first approach with zero-knowledge architecture
+   1.5. Performance optimization and offline-first design
+
+2. Code Quality Standards
+   2.1. ESLint/Prettier with strict configuration
+   2.2. TypeScript strict mode enabled
+   2.3. Unit test coverage minimum 85%
+   2.4. E2E test coverage for critical user flows
+   2.5. Regular security scanning and vulnerability assessment
+   2.6. Performance benchmarking requirements
+
+3. Documentation Requirements
+   3.1. OpenAPI/Swagger for all API endpoints
+   3.2. Component documentation with usage examples
+   3.3. Architecture Decision Records (ADRs)
+   3.4. Technical setup and deployment guides
+   3.5. Developer onboarding documentation
+
+4. Development Workflow
+   4.1. Feature Planning
+       a. Requirements validation against PRD
+       b. Technical design document with architecture diagrams
+       c. Security review checklist
+       d. Performance impact assessment
+       e. Accessibility considerations
+
+   4.2. Implementation
+       a. Test-first development approach
+       b. Code review checklist compliance
+       c. Performance benchmarking against baselines
+       d. Security validation against OWASP guidelines
+       e. Accessibility testing (WCAG 2.1)
+
+   4.3. Quality Assurance
+       a. Automated testing suite execution
+       b. Manual testing scenarios documentation
+       c. Performance testing under various conditions
+       d. Security penetration testing
+       e. Cross-platform compatibility verification
+
+5. Code Standards
+   5.1. Consistent code formatting using provided configs
+   5.2. Conventional commits format
+   5.3. Detailed PR descriptions with testing evidence
+   5.4. Documentation updates with each feature
+   5.5. Test coverage reports in PRs
+
+6. Code Review Requirements
+   6.1. Security vulnerability assessment
+   6.2. Performance impact analysis
+   6.3. Accessibility compliance verification
+   6.4. Mobile responsiveness testing
+   6.5. Offline functionality validation
+   6.6. Cross-browser compatibility
+
+7. Prohibited Practices
+   7.1. Direct database queries in UI components
+   7.2. Hardcoded credentials or sensitive data
+   7.3. Unhandled promises or async operations
+   7.4. Console.log statements in production code
+   7.5. Direct DOM manipulation outside React
+   7.6. Blocking main thread operations
+   7.7. Non-TypeScript code (except specific cases)
+
+8. Technical Guidelines
+   8.1. Implement offline-first architecture using ServiceWorkers
+   8.2. Maintain strict TypeScript types
+   8.3. Ensure cross-platform compatibility
+   8.4. Weekly dependency updates and security patches
+   8.5. Follow security best practices (OWASP Top 10)
+   8.6. Use React Query for data management
+   8.7. Implement error boundaries
+
+## Important Notes
+- Focus on offline-first architecture
+- Maintain strict type safety
+- Ensure cross-platform compatibility
+- Regular dependency updates
+- Security best practices
+- Make sure to be consistent with files and folders structure
+- Do not create duplicate folders and files if already exists.
+- When modification or changes are made alway suggest how to run and test the changes.
+
+Keypoints takeaways:
+
+Always read and consider implicitly requirements.md, tech-stack.md, .cursorrules and project-structure.md before providing any response for consistency and systematic approach through out the project. I must not need to mention it again please. If you see any inconsistency or redundancy point out and guide to settle it down.
+
+Develop a scaling strategy for notes taking app that leverages AI Tools and automation. Include specific systems for content creation, customer support, and marketing that can run with less than 2 hours of maintenance per week. Focus on maintaining quality while reducing manual work.
+
+Create a detailed action plan for validating and launching notes taking app in the next 60 days. Include market research methods, minimum viable product outline, and automated delivery systems. Prioritize tasks that maximize impact while minimizing ongoing effort.
+
+
+. use rimraf in scripts that works consistently across all platforms (Windows, macOS, Linux)
+. Add prebuild script that runs clean, lint, and tests before building
+. Add separate build commands for each platform and use more descriptive script names
+. Add prebuild script that runs clean, lint, and tests before building
+. Better separation of concerns in scripts
+. Create and use clean:windows and other scripts  with rimraf (where necessary)
+. In your response always give commands related to powershell windows.
+
+
+Standardize Script Names
+Use consistent naming across all platforms
+Implement platform-specific scripts where needed
+Use rimraf for cross-platform compatibility
+Testing Strategy
+Implement E2E tests with Cypress for critical flows
+Add integration tests for feature modules
+Set up continuous testing in CI/CD pipeline
+Documentation
+Add detailed script documentation
+Include examples for common development tasks
+Document platform-specific considerations

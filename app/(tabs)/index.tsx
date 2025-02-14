@@ -1,74 +1,147 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { Stack, Text, Button, Input, Card, XStack, YStack, ScrollView } from 'tamagui'
+import { Search, Plus, Save, FileText } from '@tamagui/lucide-icons'
+import { useState } from 'react'
+import { NoteList } from '../components/notes/NoteList'
+import { useNotes } from '../hooks/useNotes'
+import { Dialog } from '../components/ui/Dialog'
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+export default function NotesScreen() {
+  const [searchQuery, setSearchQuery] = useState('')
+  const [isAddNoteOpen, setIsAddNoteOpen] = useState(false)
+  const [newNoteTitle, setNewNoteTitle] = useState('')
+  const [newNoteContent, setNewNoteContent] = useState('')
+  
+  const { notes, isLoading, error, addNote, deleteNote } = useNotes()
 
-export default function HomeScreen() {
+  const filteredNotes = notes.filter(note => 
+    note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    note.content.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  const handleAddNote = () => {
+    if (newNoteTitle.trim() && newNoteContent.trim()) {
+      addNote(newNoteTitle.trim(), newNoteContent.trim())
+      setNewNoteTitle('')
+      setNewNoteContent('')
+      setIsAddNoteOpen(false)
+    }
+  }
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
-}
+    <Stack f={1}>
+      {/* App Bar */}
+      <XStack 
+        backgroundColor="$blue10" 
+        paddingHorizontal="$4"
+        paddingVertical="$4"
+        justifyContent="space-between" 
+        alignItems="center"
+        elevation={4}
+      >
+        <XStack space="$2" alignItems="center">
+          <FileText color="white" size={24} />
+          <Text color="white" fontSize="$6" fontWeight="bold">
+            ModernNotes
+          </Text>
+        </XStack>
+        <Button
+          icon={Plus}
+          size="$4"
+          backgroundColor="$blue8"
+          color="white"
+          onPress={() => setIsAddNoteOpen(true)}
+          pressStyle={{ scale: 0.97 }}
+          animation="quick"
+        >
+          New Note
+        </Button>
+      </XStack>
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
+      <YStack f={1} backgroundColor="$background" padding="$4">
+        {/* Search Bar */}
+        <Card 
+          elevation={2} 
+          marginVertical="$4" 
+          padding="$2"
+          backgroundColor="white"
+        >
+          <Input
+            size="$4"
+            placeholder="Search notes..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            icon={Search}
+            backgroundColor="transparent"
+          />
+        </Card>
+
+        {/* Notes Content */}
+        <ScrollView 
+          f={1} 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 20 }}
+        >
+          {isLoading ? (
+            <Card padding="$4" marginVertical="$2">
+              <Text>Loading your notes...</Text>
+            </Card>
+          ) : error ? (
+            <Card padding="$4" theme="red" marginVertical="$2">
+              <Text color="$red10">Error loading notes</Text>
+            </Card>
+          ) : filteredNotes.length === 0 ? (
+            <Card padding="$8" marginVertical="$2" alignItems="center">
+              <Text color="$gray11" textAlign="center">
+                {searchQuery ? 'No notes found' : 'Create your first note by tapping the + button'}
+              </Text>
+            </Card>
+          ) : (
+            <NoteList notes={filteredNotes} onDelete={deleteNote} />
+          )}
+        </ScrollView>
+      </YStack>
+
+      {/* Add Note Dialog */}
+      <Dialog 
+        open={isAddNoteOpen} 
+        onOpenChange={setIsAddNoteOpen}
+        title="Create New Note"
+      >
+        <YStack space="$4" padding="$2">
+          <Input
+            size="$4"
+            placeholder="Note Title"
+            value={newNoteTitle}
+            onChangeText={setNewNoteTitle}
+          />
+          <Input
+            size="$4"
+            placeholder="Write your note here..."
+            value={newNoteContent}
+            onChangeText={setNewNoteContent}
+            multiline
+            numberOfLines={6}
+            textAlignVertical="top"
+          />
+          <XStack space="$2" justifyContent="flex-end">
+            <Button 
+              variant="outlined" 
+              onPress={() => setIsAddNoteOpen(false)}
+              theme="gray"
+            >
+              Cancel
+            </Button>
+            <Button 
+              icon={Save}
+              theme="blue" 
+              onPress={handleAddNote}
+              disabled={!newNoteTitle.trim() || !newNoteContent.trim()}
+            >
+              Save Note
+            </Button>
+          </XStack>
+        </YStack>
+      </Dialog>
+    </Stack>
+  )
+}
