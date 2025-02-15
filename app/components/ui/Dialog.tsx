@@ -7,7 +7,7 @@ interface DialogProps {
   children: React.ReactNode
 }
 
-export function Dialog({ open, onOpenChange, title, children }: DialogProps) {
+export default function Dialog({ open, onOpenChange, title, children }: DialogProps) {
   return (
     <TamaguiDialog modal open={open} onOpenChange={onOpenChange}>
       <TamaguiDialog.Portal>

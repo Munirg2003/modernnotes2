@@ -1,9 +1,10 @@
 import { Stack } from 'expo-router';
-import { TamaguiProvider, Theme } from 'tamagui';
-import config from './tamagui.config';
+import { TamaguiProvider, Theme, YStack } from 'tamagui';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font';
 import { useEffect } from 'react';
 import { SplashScreen } from 'expo-router';
+import config from './tamagui.config';
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -20,12 +21,14 @@ export default function RootLayout() {
   if (!loaded) return null;
 
   return (
-    <TamaguiProvider config={config}>
-      <Theme name="light">
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack>
-      </Theme>
-    </TamaguiProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <TamaguiProvider config={config}>
+        <Theme name="light">
+          <YStack f={1} backgroundColor="$background">
+            <Stack screenOptions={{ headerShown: false }} />
+          </YStack>
+        </Theme>
+      </TamaguiProvider>
+    </GestureHandlerRootView>
   );
 }

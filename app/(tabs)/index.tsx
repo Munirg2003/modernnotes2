@@ -1,42 +1,25 @@
 import { Stack, Text, Button, Input, Card, XStack, YStack, ScrollView } from 'tamagui'
-import { Search, Plus, Save, FileText } from '@tamagui/lucide-icons'
+import { Search, Plus, FileText } from '@tamagui/lucide-icons'
 import { useState } from 'react'
-import { NoteList } from '../components/notes/NoteList'
-import { useNotes } from '../hooks/useNotes'
-import { Dialog } from '../components/ui/Dialog'
+import { useNotes } from '@/hooks/useNotes'
 
 export default function NotesScreen() {
   const [searchQuery, setSearchQuery] = useState('')
-  const [isAddNoteOpen, setIsAddNoteOpen] = useState(false)
-  const [newNoteTitle, setNewNoteTitle] = useState('')
-  const [newNoteContent, setNewNoteContent] = useState('')
-  
-  const { notes, isLoading, error, addNote, deleteNote } = useNotes()
+  const { notes, addNote, deleteNote } = useNotes()
 
   const filteredNotes = notes.filter(note => 
     note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     note.content.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  const handleAddNote = () => {
-    if (newNoteTitle.trim() && newNoteContent.trim()) {
-      addNote(newNoteTitle.trim(), newNoteContent.trim())
-      setNewNoteTitle('')
-      setNewNoteContent('')
-      setIsAddNoteOpen(false)
-    }
-  }
-
   return (
-    <Stack f={1}>
-      {/* App Bar */}
+    <Stack f={1} backgroundColor="$background">
+      {/* Header */}
       <XStack 
         backgroundColor="$blue10" 
-        paddingHorizontal="$4"
-        paddingVertical="$4"
+        padding="$4" 
         justifyContent="space-between" 
         alignItems="center"
-        elevation={4}
       >
         <XStack space="$2" alignItems="center">
           <FileText color="white" size={24} />
@@ -44,104 +27,89 @@ export default function NotesScreen() {
             ModernNotes
           </Text>
         </XStack>
-        <Button
-          icon={Plus}
-          size="$4"
-          backgroundColor="$blue8"
-          color="white"
-          onPress={() => setIsAddNoteOpen(true)}
-          pressStyle={{ scale: 0.97 }}
-          animation="quick"
-        >
-          New Note
-        </Button>
       </XStack>
 
-      <YStack f={1} backgroundColor="$background" padding="$4">
-        {/* Search Bar */}
-        <Card 
-          elevation={2} 
-          marginVertical="$4" 
-          padding="$2"
-          backgroundColor="white"
-        >
-          <Input
-            size="$4"
-            placeholder="Search notes..."
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            icon={Search}
-            backgroundColor="transparent"
-          />
-        </Card>
+      {/* Search Bar */}
+      <XStack 
+        space="$3" 
+        padding="$4" 
+        backgroundColor="$background" 
+        borderBottomColor="$borderColor" 
+        borderBottomWidth={1}
+      >
+        <Input
+          flex={1}
+          size="$4"
+          placeholder="Search notes..."
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          backgroundColor="$backgroundHover"
+          borderWidth={0}
+          icon={Search}
+        />
+        <Button
+          size="$4"
+          icon={Plus}
+          theme="blue"
+          onPress={() => {/* Add note */}}
+        />
+      </XStack>
 
-        {/* Notes Content */}
-        <ScrollView 
-          f={1} 
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 20 }}
-        >
-          {isLoading ? (
-            <Card padding="$4" marginVertical="$2">
-              <Text>Loading your notes...</Text>
-            </Card>
-          ) : error ? (
-            <Card padding="$4" theme="red" marginVertical="$2">
-              <Text color="$red10">Error loading notes</Text>
-            </Card>
-          ) : filteredNotes.length === 0 ? (
-            <Card padding="$8" marginVertical="$2" alignItems="center">
-              <Text color="$gray11" textAlign="center">
-                {searchQuery ? 'No notes found' : 'Create your first note by tapping the + button'}
+      {/* Notes Grid */}
+      <ScrollView flex={1} padding="$4">
+        <YStack space="$4">
+          {filteredNotes.length === 0 ? (
+            <Card padding="$8" alignItems="center">
+              <Text color="$gray11">
+                {searchQuery ? 'No notes found' : 'Create your first note!'}
               </Text>
             </Card>
           ) : (
-            <NoteList notes={filteredNotes} onDelete={deleteNote} />
+            filteredNotes.map(note => (
+              <Card
+                key={note.id}
+                elevation={2}
+                scale={0.9}
+                hoverStyle={{ scale: 0.925 }}
+                pressStyle={{ scale: 0.875 }}
+                animation="quick"
+                backgroundColor="$background"
+                borderRadius="$4"
+                padding="$4"
+              >
+                <YStack space="$2">
+                  <XStack space="$2" alignItems="center">
+                    <Text fontSize={24}>{note.emoji}</Text>
+                    <Text fontSize="$6" fontWeight="bold" color="$color">
+                      {note.title}
+                    </Text>
+                  </XStack>
+                  <Text 
+                    numberOfLines={3} 
+                    color="$color" 
+                    opacity={0.8}
+                  >
+                    {note.content}
+                  </Text>
+                  <XStack justifyContent="space-between" alignItems="center">
+                    <Text fontSize="$3" color="$gray10">
+                      {new Date(note.updatedAt).toLocaleDateString()}
+                    </Text>
+                    <Button
+                      size="$2"
+                      theme="red"
+                      variant="outlined"
+                      onPress={() => deleteNote(note.id)}
+                    >
+                      Delete
+                    </Button>
+                  </XStack>
+                </YStack>
+              </Card>
+            ))
           )}
-        </ScrollView>
-      </YStack>
-
-      {/* Add Note Dialog */}
-      <Dialog 
-        open={isAddNoteOpen} 
-        onOpenChange={setIsAddNoteOpen}
-        title="Create New Note"
-      >
-        <YStack space="$4" padding="$2">
-          <Input
-            size="$4"
-            placeholder="Note Title"
-            value={newNoteTitle}
-            onChangeText={setNewNoteTitle}
-          />
-          <Input
-            size="$4"
-            placeholder="Write your note here..."
-            value={newNoteContent}
-            onChangeText={setNewNoteContent}
-            multiline
-            numberOfLines={6}
-            textAlignVertical="top"
-          />
-          <XStack space="$2" justifyContent="flex-end">
-            <Button 
-              variant="outlined" 
-              onPress={() => setIsAddNoteOpen(false)}
-              theme="gray"
-            >
-              Cancel
-            </Button>
-            <Button 
-              icon={Save}
-              theme="blue" 
-              onPress={handleAddNote}
-              disabled={!newNoteTitle.trim() || !newNoteContent.trim()}
-            >
-              Save Note
-            </Button>
-          </XStack>
         </YStack>
-      </Dialog>
+      </ScrollView>
     </Stack>
   )
 }

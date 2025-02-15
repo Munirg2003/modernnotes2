@@ -5,26 +5,49 @@ const config: ExpoConfig = {
   slug: 'modern-notes',
   version: '1.0.0',
   orientation: 'portrait',
-  icon: './assets/icon.png',
-  userInterfaceStyle: 'light',
+  icon: './assets/images/icon.png',
+  userInterfaceStyle: 'automatic',
   splash: {
-    image: './assets/splash.png',
+    image: './assets/images/splash-icon.png',
     resizeMode: 'contain',
     backgroundColor: '#ffffff'
   },
-  assetBundlePatterns: ['**/*'],
+  assetBundlePatterns: [
+    'assets/**/*'
+  ],
   ios: {
-    supportsTablet: true
+    supportsTablet: true,
+    bundleIdentifier: 'com.modernnotes.app'
   },
   android: {
     adaptiveIcon: {
-      foregroundImage: './assets/adaptive-icon.png',
+      foregroundImage: './assets/images/adaptive-icon.png',
       backgroundColor: '#ffffff'
-    }
+    },
+    package: 'com.modernnotes.app'
   },
   web: {
-    favicon: './assets/favicon.png'
-  }
+    bundler: 'metro',
+    favicon: './assets/images/favicon.png'
+  },
+  plugins: [
+    [
+      'expo-router',
+      {
+        origin: false
+      }
+    ]
+  ],
+  experiments: {
+    typedRoutes: true,
+    tsconfigPaths: true
+  },
+  extra: {
+    router: {
+      origin: false
+    },
+  },
+  newArchEnabled: true
 }
 
 export default config 

@@ -1,3 +1,17 @@
+
+# Clean and rebuild
+pwsh -Command @"
+Write-Host 'Cleaning project...'
+pnpm run clean:windows
+
+Write-Host 'Installing dependencies...'
+pnpm install
+
+Write-Host 'Starting development server...'
+pnpm exec expo start -c
+"@
+
+-----------------------------
 npm run clean
 npm run setup
 npm start
